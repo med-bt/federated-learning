@@ -1,4 +1,5 @@
 import sqlite3
 class Schema:
-    def __init__(self):
+    DATABASE = 'Federated.db'
+    def __init__(self,DATABASE):
         pass
