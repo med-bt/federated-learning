@@ -1,27 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
-from flask_wtf import FlaskForm
-from wtforms import SelectField, StringField, SubmitField, FloatField, IntegerField
-from wtforms.validators import DataRequired
-from sklearn.linear_model import LinearRegression
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.cluster import KMeans
+from forms import MLTypeForm,AlgorithmForm,HyperparametersForm
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key_here'
-
-class MLTypeForm(FlaskForm):
-    ml_type = SelectField('Choose ML Type', choices=[('regression', 'Regression'), ('classification', 'Classification'), ('clustering', 'Clustering')], validators=[DataRequired()])
-    submit = SubmitField('Next')
-
-class AlgorithmForm(FlaskForm):
-    algorithm = SelectField('Choose Algorithm', choices=[], validators=[DataRequired()])
-    submit = SubmitField('Next')
-
-class HyperparametersForm(FlaskForm):
-    param1 = FloatField('Parameter 1 (e.g., max_iter for KMeans)', validators=[DataRequired()])
-    param2 = FloatField('Parameter 2 (e.g., n_clusters for KMeans)', validators=[DataRequired()])
-    batch_size = IntegerField('Batch Size', validators=[DataRequired()])
-    submit = SubmitField('Generate Code')
 
 @app.route('/', methods=['GET', 'POST'])
 def select_type():
@@ -51,7 +33,6 @@ def hyperparameters(ml_type, algorithm):
         param2 = form.param2.data
         batch_size = form.batch_size.data
 
-        # Generate Python code
         if algorithm == 'linear_regression':
             code = f"""
 from sklearn.linear_model import LinearRegression
@@ -77,7 +58,6 @@ model = KMeans(n_clusters={param2}, max_iter={param1})
         return render_template('generated_code.html', code=code)
     return render_template('hyperparameters.html', form=form)
 
-# Define templates
 @app.route('/generated_code.html')
 def generated_code():
     return """<html><body><pre>{{ code }}</pre></body></html>"""
